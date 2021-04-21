@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+  <script>
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('', {
+      cluster: 'ap1'
+    });
+
+    var channel = pusher.subscribe('simple-channel');
+    channel.bind('simple-event', function(data) {
+      alert(data);
+    });
+  </script>
+</head>
+<body>
+  <h1>Pusher Test</h1>
+  <p>
+    Try publishing an event to channel <code>simple-channel</code>
+    with event name <code>simple-event</code>.
+  </p>
+  <div>
+    <button>Click Me</button>
+  </div>
+  <script>
+
+    // Test trigger from server
+    document.querySelector('button').addEventListener('click', function() {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/ajax");
+      xhr.send();
+    });
+  </script>
+</body>

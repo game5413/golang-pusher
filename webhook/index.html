@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<head>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+  <script>
+    // Determine subscription to channel was successful
+    var isTriggerable = false;
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    function trigger(channel) {
+      if (!isTriggerable) {
+        throw 'Subscribe not completed';
+      }
+      return channel.trigger('client-testEvent', {
+        id: 1
+      });
+    }
+
+    var pusher = new Pusher('', {
+      cluster: 'ap1',
+      authEndpoint: "/auth",
+    });
+
+    var channel = pusher.subscribe('private-client-channel');
+    channel.bind('private-client-event', function(data) {
+      alert(data);
+    });
+    channel.bind("pusher:subscription_succeeded", function() {
+      isTriggerable = true;
+    });
+  </script>
+</head>
+<body>
+  <h1>Pusher Test</h1>
+  <p>
+    Try publishing an event to channel <code>private-client-channel</code>
+    with event name <code>private-event-channel</code>.
+  </p>
+  <div>
+    <button id="server-trigger">Server Trigger</button>
+    <button id="client-trigger">Client Trigger</button>
+  </div>
+  <script>
+
+    // Test trigger from server
+    document.getElementById('server-trigger').addEventListener('click', function() {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/ajax");
+      xhr.send();
+    });
+
+    document.getElementById('client-trigger').addEventListener('click', function() {
+      trigger(channel);
+    });
+  </script>
+</body>
